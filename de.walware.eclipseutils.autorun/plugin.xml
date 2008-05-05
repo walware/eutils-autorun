@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="de.walware.eclipseutils.autorun.internal.AutoRunStartup">
+            class="de.walware.eclipseutils.autorun.internal.nostart.AutoRunStartup">
       </startup>
    </extension>
    <extension

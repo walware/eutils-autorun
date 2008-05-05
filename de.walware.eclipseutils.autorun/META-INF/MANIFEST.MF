@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
+Bundle-Vendor: WalWare.de
 Bundle-Name: Auto Run
 Bundle-SymbolicName: de.walware.eclipseutils.autorun;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: de.walware.eclipseutils.autorun.internal.Activator
-Bundle-Vendor: WalWare.de
+Bundle-ActivationPolicy: lazy;exclude:="de.walware.eclipseutils.autorun.internal.nostart"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Eclipse-LazyStart: false
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core,
