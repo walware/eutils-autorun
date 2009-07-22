@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Vendor: WalWare.de
 Bundle-Name: Auto Run
-Bundle-SymbolicName: de.walware.eclipseutils.autorun;singleton:=true
+Bundle-SymbolicName: de.walware.eutils.autorun;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Activator: de.walware.eclipseutils.autorun.internal.Activator
 Bundle-ActivationPolicy: lazy;exclude:="de.walware.eclipseutils.autorun.internal.nostart"
