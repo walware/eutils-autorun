@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.walware.eutils.autorun"
+      label="Auto Run"
+      version="0.3.0.qualifier"
+      provider-name="WalWare.de"
+      license-feature="de.walware.opensource.license"
+      license-feature-version="1.0.0">
+
+   <description url="http://www.walware.de/goto/statet">
+      Utility to run a launch configuration at startup of Eclipse automatically.
+   </description>
+
+   <copyright>
+      Copyright (c) Stephan Wahlbrink and others 2003-2011. All rights reserved.
+   </copyright>
+
+   <license>
+      %license_text
+   </license>
+
+   <plugin
+         id="de.walware.eutils.autorun"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
