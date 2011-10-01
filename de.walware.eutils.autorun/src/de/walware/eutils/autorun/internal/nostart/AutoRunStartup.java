@@ -9,21 +9,21 @@
  *     Stephan Wahlbrink - initial API and implementation
  *******************************************************************************/
 
-package de.walware.eclipseutils.autorun.internal.nostart;
+package de.walware.eutils.autorun.internal.nostart;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.IStartup;
 
-import de.walware.eclipseutils.autorun.internal.Activator;
-import de.walware.eclipseutils.autorun.internal.AutoRunner;
+import de.walware.eutils.autorun.internal.Activator;
+import de.walware.eutils.autorun.internal.AutoRunner;
 
 
 public class AutoRunStartup implements IStartup {
 	
 	
 	public void earlyStartup() {
-		final IEclipsePreferences node = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		if (node.getBoolean(Activator.PREFKEY_AUTORUN_ENABLED, false)) {
 			final String key = node.get(Activator.PREFKEY_AUTORUN_CONFIG_ID, null);
 			if (key != null) {

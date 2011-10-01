@@ -9,7 +9,7 @@
  *     Stephan Wahlbrink - initial API and implementation
  *******************************************************************************/
 
-package de.walware.eclipseutils.autorun.internal;
+package de.walware.eutils.autorun.internal;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -20,10 +20,10 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 	
-	public static final String PLUGIN_ID = "de.walware.eclipseutils.autorun";
+	public static final String PLUGIN_ID = "de.walware.eutils.autorun"; //$NON-NLS-1$
 	
-	public static final String PREFKEY_AUTORUN_ENABLED = "enabled";
-	public static final String PREFKEY_AUTORUN_CONFIG_ID = "config.id";
+	public static final String PREFKEY_AUTORUN_ENABLED = "enabled"; //$NON-NLS-1$
+	public static final String PREFKEY_AUTORUN_CONFIG_ID = "config.id"; //$NON-NLS-1$
 	
 	
 	private static Activator gPlugin;

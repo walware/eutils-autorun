@@ -18,13 +18,13 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="de.walware.eclipseutils.autorun.internal.nostart.AutoRunStartup">
+            class="de.walware.eutils.autorun.internal.nostart.AutoRunStartup">
       </startup>
    </extension>
    <extension
          point="org.eclipse.ui.keywords">
       <keyword
-            id="de.walware.eclipseutils.autorun.keywords.startup"
+            id="de.walware.eutils.autorun.keywords.startup"
             label="startup run autostart launch">
       </keyword>
    </extension>
@@ -32,11 +32,11 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="de.walware.eclipseutils.autorun.internal.AutoRunPreferencePage"
-            id="de.walware.eclipseutils.autorun.preferencePages.Config"
+            class="de.walware.eutils.autorun.internal.AutoRunPreferencePage"
+            id="de.walware.eutils.autorun.preferencePages.Config"
             name="Auto Run">
          <keywordReference
-               id="de.walware.eclipseutils.autorun.keywords.startup">
+               id="de.walware.eutils.autorun.keywords.startup">
          </keywordReference>
       </page>
    </extension>
