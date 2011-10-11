@@ -23,7 +23,10 @@ public class AutoRunStartup implements IStartup {
 	
 	
 	public void earlyStartup() {
-		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		if ("true".equalsIgnoreCase(System.getProperty("de.walware.eutils.autorun.disable"))) { //$NON-NLS-1$
+			return;
+		}
+		final IEclipsePreferences node = new InstanceScope().getNode(Activator.PLUGIN_ID);
 		if (node.getBoolean(Activator.PREFKEY_AUTORUN_ENABLED, false)) {
 			final String key = node.get(Activator.PREFKEY_AUTORUN_CONFIG_ID, null);
 			if (key != null) {

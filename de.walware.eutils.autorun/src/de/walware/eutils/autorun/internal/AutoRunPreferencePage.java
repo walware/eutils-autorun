@@ -82,7 +82,7 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 				final Object[] children = super.getChildren(parentElement);
 				final List<Object> filtered = new ArrayList<Object>(children.length);
 				for (int i = 0; i < children.length; i++) {
-					if (hasChildren(children[i])) {
+					if (super.hasChildren(children[i])) {
 						filtered.add(children[i]);
 					}
 				}
