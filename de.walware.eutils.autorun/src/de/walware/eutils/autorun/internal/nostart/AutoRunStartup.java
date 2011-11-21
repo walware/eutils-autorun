@@ -13,6 +13,7 @@ package de.walware.eutils.autorun.internal.nostart;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.IStartup;
 
 import de.walware.eutils.autorun.internal.Activator;
@@ -30,7 +31,8 @@ public class AutoRunStartup implements IStartup {
 		if (node.getBoolean(Activator.PREFKEY_AUTORUN_ENABLED, false)) {
 			final String key = node.get(Activator.PREFKEY_AUTORUN_CONFIG_ID, null);
 			if (key != null) {
-				new AutoRunner(key).schedule(500);
+				final String mode = node.get(Activator.PREFKEY_AUTORUN_MODE_ID, ILaunchManager.RUN_MODE);
+				new AutoRunner(key, mode).schedule(500);
 			}
 		}
 	}

@@ -34,7 +34,7 @@
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="de.walware.eutils.autorun.internal.AutoRunPreferencePage"
             id="de.walware.eutils.autorun.preferencePages.Config"
-            name="Auto Run">
+            name="Auto-Run">
          <keywordReference
                id="de.walware.eutils.autorun.keywords.startup">
          </keywordReference>

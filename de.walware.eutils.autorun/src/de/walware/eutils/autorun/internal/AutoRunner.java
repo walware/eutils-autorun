@@ -18,18 +18,26 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class AutoRunner extends Job {
 	
 	
-	private String fKey;
+	private final String fKey;
+	
+	private final String fMode;
 	
 	
-	public AutoRunner(final String key) {
-		super("Auto Run");
+	public AutoRunner(final String key, final String mode) {
+		super("Auto-Run");
+		if (key == null) {
+			throw new NullPointerException("key");
+		}
+		if (mode == null) {
+			throw new NullPointerException("mode");
+		}
 		fKey = key;
+		fMode = mode;
 	}
 	
 	
@@ -38,15 +46,18 @@ public class AutoRunner extends Job {
 		try {
 			final ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(fKey);
 			if (config == null) {
-				StatusManager.getManager().handle(new Status(IStatus.WARNING, Activator.PLUGIN_ID, 101, 
-						"The configured autorun launch configuration could not loaded.", null));
+				final IStatus status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, 101,
+						"The configured launch configuration for Auto-Run could not be loaded.", null);
+				StatusManager.getManager().handle(status);
 				return Status.OK_STATUS;
 			}
 			
-			config.launch(ILaunchManager.RUN_MODE, monitor, false, true);
-		} catch (final CoreException e) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, 102, 
-					"An error occured while running autorun launch configuration.", e));
+			config.launch(fMode, monitor, false, true);
+		}
+		catch (final CoreException e) {
+			final IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 102, 
+					"An error occured when starting the launch configuration by Auto-Run.", e);
+			return status;
 		}
 		return Status.OK_STATUS;
 	}

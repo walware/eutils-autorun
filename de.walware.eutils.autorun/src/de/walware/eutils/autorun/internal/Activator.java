@@ -24,6 +24,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static final String PREFKEY_AUTORUN_ENABLED = "enabled"; //$NON-NLS-1$
 	public static final String PREFKEY_AUTORUN_CONFIG_ID = "config.id"; //$NON-NLS-1$
+	public static final String PREFKEY_AUTORUN_MODE_ID = "mode.id"; //$NON-NLS-1$
 	
 	
 	private static Activator gPlugin;
