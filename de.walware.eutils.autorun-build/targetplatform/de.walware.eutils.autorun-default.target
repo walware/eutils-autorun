@@ -3,10 +3,11 @@
 
 <target name="all">
 	<locations>
-		<location includeAllPlatforms="true" includeMode="slicer" includeSource="false"
+		<location includeAllPlatforms="false" includeMode="planner" includeConfigurePhase="false" includeSource="false"
 				type="InstallableUnit">
 			<repository location="http://download.eclipse.org/releases/helios"/>
-			<unit id="org.eclipse.platform.ide" version="3.6.2.M20110210-1200"/>
+			<unit id="org.eclipse.platform.ide"
+					version="3.6.2.M20110210-1200"/>
 		</location>
 	</locations>
 </target>
