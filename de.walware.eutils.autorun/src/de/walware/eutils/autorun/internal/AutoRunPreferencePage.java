@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2007 WalWare.de/Stephan Wahlbrink (http://www.walware.de).
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Stephan Wahlbrink - initial API and implementation
- *******************************************************************************/
+/*=============================================================================#
+ # Copyright (c) 2007-2014 WalWare.de/Stephan Wahlbrink (http://www.walware.de).
+ # All rights reserved. This program and the accompanying materials
+ # are made available under the terms of the Eclipse Public License v1.0
+ # which accompanies this distribution, and is available at
+ # http://www.eclipse.org/legal/epl-v10.html
+ # 
+ # Contributors:
+ #     Stephan Wahlbrink - initial API and implementation
+ #=============================================================================*/
 
 package de.walware.eutils.autorun.internal;
 
@@ -75,6 +75,7 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 	
 	
+	@Override
 	public void init(final IWorkbench workbench) {
 	}
 	
@@ -170,11 +171,13 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 			});
 			
 			fEntryCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
 					updateModes();
 				}
 			});
 			fModeControl.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
 					final Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
 					if (element != null) {
