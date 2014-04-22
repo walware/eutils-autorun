@@ -5,9 +5,9 @@
 	<locations>
 		<location includeAllPlatforms="false" includeMode="planner" includeConfigurePhase="false" includeSource="false"
 				type="InstallableUnit">
-			<repository location="http://download.eclipse.org/releases/helios"/>
+			<repository location="http://download.eclipse.org/eclipse/updates/3.8"/>
 			<unit id="org.eclipse.platform.ide"
-					version="3.6.2.M20110210-1200"/>
+					version="3.8.2.M20130131-0800"/>
 		</location>
 	</locations>
 </target>

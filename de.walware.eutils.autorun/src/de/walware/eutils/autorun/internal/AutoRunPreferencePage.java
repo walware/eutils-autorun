@@ -1,5 +1,5 @@
 /*=============================================================================#
- # Copyright (c) 2007-2014 WalWare.de/Stephan Wahlbrink (http://www.walware.de).
+ # Copyright (c) 2007-2014 Stephan Wahlbrink (WalWare.de) and others.
  # All rights reserved. This program and the accompanying materials
  # are made available under the terms of the Eclipse Public License v1.0
  # which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -30,6 +32,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationCom
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTreeContentProvider;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -49,6 +52,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -58,17 +62,17 @@ import org.osgi.service.prefs.BackingStoreException;
 public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	
-	private ILaunchManager fLaunchManager;
+	private ILaunchManager launchManager;
 	
-	private Button fEnableButton;
+	private Button enableButton;
 	
-	private TreeViewer fEntryCombo;
-	private Button fViewButton;
+	private TreeViewer entryViewer;
+	private Button viewButton;
 	
-	private Label fModeLabel;
-	private ComboViewer fModeControl;
+	private Label modeLabel;
+	private ComboViewer modeViewer;
 	
-	private Set<String> fLastMode;
+	private Set<String> lastMode;
 	
 	
 	public AutoRunPreferencePage() {
@@ -81,28 +85,33 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	@Override
 	protected Control createContents(final Composite parent) {
-		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
+		this.launchManager= DebugPlugin.getDefault().getLaunchManager();
 		
-		final Composite composite = new Composite(parent, SWT.NONE);
-		final GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		
-		fEnableButton = new Button(composite, SWT.CHECK);
-		fEnableButton.setText("Enable &run at startup of:");
-		fEnableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-		
-		{	fEntryCombo = new TreeViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-			fEntryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-			fEntryCombo.setLabelProvider(DebugUITools.newDebugModelPresentation());
-			fEntryCombo.setContentProvider(new LaunchConfigurationTreeContentProvider(ILaunchManager.RUN_MODE, getShell()) {
+		final Composite composite= new Composite(parent, SWT.NONE);
+		{	final GridLayout gd= new GridLayout();
+			gd.marginWidth= 0;
+			gd.marginHeight= 0;
+			gd.numColumns= 3;
+			composite.setLayout(gd);
+		}
+		{	this.enableButton= new Button(composite, SWT.CHECK);
+			this.enableButton.setText("Enable &launch at startup of:");
+			this.enableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		}
+		{	this.entryViewer= new TreeViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+			final Tree tree= this.entryViewer.getTree();
+			final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+			Dialog.applyDialogFont(this.entryViewer.getControl());
+			gd.heightHint= tree.getItemHeight() * 10;
+			this.entryViewer.getControl().setLayoutData(gd);
+			
+			this.entryViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
+			this.entryViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(ILaunchManager.RUN_MODE, getShell()) {
 				@Override
 				public Object[] getElements(final Object parentElement) {
-					final Object[] children = super.getChildren(parentElement);
-					final List<Object> filtered = new ArrayList<Object>(children.length);
-					for (int i = 0; i < children.length; i++) {
+					final Object[] children= super.getChildren(parentElement);
+					final List<Object> filtered= new ArrayList<>(children.length);
+					for (int i= 0; i < children.length; i++) {
 						if (super.hasChildren(children[i])) {
 							filtered.add(children[i]);
 						}
@@ -110,113 +119,117 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 					return filtered.toArray();
 				}
 			});
-			fEntryCombo.setComparator(new LaunchConfigurationComparator());
-			
-			fViewButton = new Button(composite, SWT.PUSH);
-			fViewButton.setText("View/&Edit...");
-			final GridData gd = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
-			initializeDialogUnits(fViewButton);
-			gd.widthHint = Math.max(fViewButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH));
-			fViewButton.setLayoutData(gd);
-			fViewButton.addSelectionListener(new SelectionAdapter() {
+			this.entryViewer.setComparator(new LaunchConfigurationComparator());
+		}
+		{	this.viewButton= new Button(composite, SWT.PUSH);
+			this.viewButton.setText("View/&Edit...");
+			final GridData gd= new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
+			Dialog.applyDialogFont(this.viewButton);
+			gd.widthHint= Math.max(this.viewButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x,
+					convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH) );
+			this.viewButton.setLayoutData(gd);
+			this.viewButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					final Object element = ((IStructuredSelection) fEntryCombo.getSelection()).getFirstElement();
+					final Object element= ((IStructuredSelection) AutoRunPreferencePage.this.entryViewer.getSelection()).getFirstElement();
 					if (element instanceof ILaunchConfiguration) {
 						DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), (ILaunchConfiguration) element, IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 					}
 				}
 			});
 		}
-		{	fModeLabel = new Label(composite, SWT.NONE);
-			fModeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-			fModeLabel.setText("Launch &Mode:");
+		{	this.modeLabel= new Label(composite, SWT.NONE);
+			this.modeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+			this.modeLabel.setText("Launch &Mode:");
 			
-			fModeControl = new ComboViewer(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-			fModeControl.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			fModeControl.setContentProvider(new ArrayContentProvider());
-			fModeControl.setLabelProvider(new LabelProvider() {
+			this.modeViewer= new ComboViewer(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+			this.modeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			this.modeViewer.setContentProvider(new ArrayContentProvider());
+			this.modeViewer.setLabelProvider(new LabelProvider() {
 				
-				private final StringBuilder fStringBuilder = new StringBuilder();
+				private final StringBuilder fStringBuilder= new StringBuilder();
 				
 				@Override
 				public String getText(final Object element) {
-					fStringBuilder.setLength(0);
-					final Iterator<String> iter = ((Set<String>) element).iterator();
+					this.fStringBuilder.setLength(0);
+					final Iterator<String> iter= ((Set<String>) element).iterator();
 					if (iter.hasNext()) {
-						append(fLaunchManager.getLaunchMode(iter.next()));
+						append(AutoRunPreferencePage.this.launchManager.getLaunchMode(iter.next()));
 						while (iter.hasNext()) {
-							fStringBuilder.append("+");
-							append(fLaunchManager.getLaunchMode(iter.next()));
+							this.fStringBuilder.append("+");
+							append(AutoRunPreferencePage.this.launchManager.getLaunchMode(iter.next()));
 						}
 					}
-					return fStringBuilder.toString();
+					return this.fStringBuilder.toString();
 				}
 				
 				private void append(final ILaunchMode mode) {
-					final String s = mode.getLabel();
-					for (int i = 0; i < s.length(); i++) {
-						final char c = s.charAt(i);
+					final String s= mode.getLabel();
+					for (int i= 0; i < s.length(); i++) {
+						final char c= s.charAt(i);
 						if (c == '&') {
 							i++;
 							if (i < s.length()) {
-								fStringBuilder.append(s.charAt(i));
+								this.fStringBuilder.append(s.charAt(i));
 							}
 						}
 						else {
-							fStringBuilder.append(c);
+							this.fStringBuilder.append(c);
 						}
 					}
 				}
 			});
 			
-			fEntryCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			this.entryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
 					updateModes();
 				}
 			});
-			fModeControl.addSelectionChangedListener(new ISelectionChangedListener() {
+			this.modeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
-					final Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
+					final Object element= ((IStructuredSelection) event.getSelection()).getFirstElement();
 					if (element != null) {
-						fLastMode = (Set<String>) element;
+						AutoRunPreferencePage.this.lastMode= (Set<String>) element;
 					}
 				}
 			});
 		}
 		
-		loadConfig();
+		Dialog.applyDialogFont(composite);
+		
+		loadConfigs();
+		loadPrefs();
 		
 		return composite;
 	}
 	
 	private void updateModes() {
-		final Object element = ((IStructuredSelection) fEntryCombo.getSelection()).getFirstElement();
+		final Object element= ((IStructuredSelection) this.entryViewer.getSelection()).getFirstElement();
 		if (element instanceof ILaunchConfiguration) {
 			try {
-				final Set<Set<String>> combinations = ((ILaunchConfiguration) element).getType()
+				final Set<Set<String>> combinations= ((ILaunchConfiguration) element).getType()
 						.getSupportedModeCombinations();
 				{	// mixed not yet supported
-					final Iterator<Set<String>> iter = combinations.iterator();
+					final Iterator<Set<String>> iter= combinations.iterator();
 					while (iter.hasNext()) {
 						if (iter.next().size() != 1) {
 							iter.remove();
 						}
 					}
 				}
-				final Set<String>[] array = combinations.toArray(new Set[combinations.size()]);
+				final Set<String>[] array= combinations.toArray(new Set[combinations.size()]);
 				if (array.length > 0) {
-					fModeControl.setInput(array);
-					if (fLastMode != null && combinations.contains(fLastMode)) {
-						fModeControl.setSelection(new StructuredSelection(fLastMode));
+					this.modeViewer.setInput(array);
+					if (this.lastMode != null && combinations.contains(this.lastMode)) {
+						this.modeViewer.setSelection(new StructuredSelection(this.lastMode));
 					}
 					else {
-						fModeControl.setSelection(new StructuredSelection(array[0]));
+						this.modeViewer.setSelection(new StructuredSelection(array[0]));
 					}
-					fModeLabel.setEnabled(true);
-					fModeControl.getControl().setEnabled(true);
+					this.modeLabel.setEnabled(true);
+					this.modeViewer.getControl().setEnabled(true);
 					return;
 				}
 			}
@@ -225,56 +238,63 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 						"An error occured when loading supported modes for the launch configuration.", e));
 			}
 		}
-		fModeControl.setInput(new Set[0]);
-		fModeLabel.setEnabled(false);
-		fModeControl.getControl().setEnabled(false);
+		this.modeViewer.setInput(new Set[0]);
+		this.modeLabel.setEnabled(false);
+		this.modeViewer.getControl().setEnabled(false);
 	}
 	
-	private void loadConfig() {
-		ILaunchConfiguration[] launchConfigurations;
+	private void loadConfigs() {
+		final ILaunchConfiguration[] launchConfigurations;
 		try {
-			launchConfigurations = fLaunchManager.getLaunchConfigurations();
-			fEntryCombo.setInput(launchConfigurations);
+			launchConfigurations= this.launchManager.getLaunchConfigurations();
+			this.entryViewer.setInput(launchConfigurations);
 		}
 		catch (final CoreException e) {
 			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, 
 					"Error occured when loading available launch configurations.", e)); //$NON-NLS-1$
-			fEnableButton.setSelection(false);
-			fEnableButton.setEnabled(false);
+			this.enableButton.setSelection(false);
+			this.enableButton.setEnabled(false);
 			
 			updateModes();
 			return;
 		}
-		
-		final IEclipsePreferences node = new InstanceScope().getNode(Activator.PLUGIN_ID);
-		fEnableButton.setSelection(node.getBoolean(Activator.PREFKEY_AUTORUN_ENABLED, false));
+	}
+	
+	private void loadPrefs() {
+		final IPreferencesService preferences= Platform.getPreferencesService();
+		this.enableButton.setSelection(preferences.getBoolean(
+				Activator.PLUGIN_ID, Activator.ENABLED_PREF_KEY, true, null ));
 		try {
-			final String key = node.get(Activator.PREFKEY_AUTORUN_CONFIG_ID, null);
-			final ILaunchConfiguration config = (key != null && key.length() > 0) ?
-					fLaunchManager.getLaunchConfiguration(key) : null;
-			fEntryCombo.setSelection((config != null) ? new StructuredSelection(config) : new StructuredSelection());
+			final String key= preferences.getString(
+					Activator.PLUGIN_ID, Activator.LAUNCH_CONFIG_ID_PREF_KEY, null, null );
+			final ILaunchConfiguration config= (key != null && key.length() > 0) ?
+					this.launchManager.getLaunchConfiguration(key) : null;
+			this.entryViewer.setSelection((config != null) ? new StructuredSelection(config) : new StructuredSelection());
 		}
 		catch (final CoreException e) {
 		}
 		
-		{	final String mode = node.get(Activator.PREFKEY_AUTORUN_MODE_ID, null);
+		{	final String mode= preferences.getString(
+					Activator.PLUGIN_ID, Activator.LAUNCH_MODE_ID_PREF_KEY, null, null );
 			if (mode != null) {
-				fLastMode = new HashSet<String>(1);
-				fLastMode.add(mode);
+				this.lastMode= new HashSet<>(1);
+				this.lastMode.add(mode);
 			}
 		}
 		
 		updateModes();
 	}
 	
-	private void saveConfig() {
-		final IEclipsePreferences node = new InstanceScope().getNode(Activator.PLUGIN_ID);
-		node.putBoolean(Activator.PREFKEY_AUTORUN_ENABLED, fEnableButton.getSelection());
-		final Object element = ((IStructuredSelection) fEntryCombo.getSelection()).getFirstElement();
-		String key = null;
+	private void savePrefs(final boolean flush) {
+		final IEclipsePreferences node= InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		
+		node.putBoolean(Activator.ENABLED_PREF_KEY, this.enableButton.getSelection());
+		
+		final Object element= ((IStructuredSelection) this.entryViewer.getSelection()).getFirstElement();
+		String key= null;
 		if (element instanceof ILaunchConfiguration) {
 			try {
-				key = ((ILaunchConfiguration) element).getMemento();
+				key= ((ILaunchConfiguration) element).getMemento();
 			}
 			catch (final CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, 
@@ -283,35 +303,43 @@ public class AutoRunPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		}
 		if (key != null) {
-			node.put(Activator.PREFKEY_AUTORUN_CONFIG_ID, key);
+			node.put(Activator.LAUNCH_CONFIG_ID_PREF_KEY, key);
 			
-			final Set<String> modes = (Set<String>) ((IStructuredSelection) fModeControl.getSelection()).getFirstElement();
+			final Set<String> modes= (Set<String>) ((IStructuredSelection) this.modeViewer.getSelection()).getFirstElement();
 			if (modes != null && modes.size() == 1) {
-				node.put(Activator.PREFKEY_AUTORUN_MODE_ID, modes.iterator().next());
+				node.put(Activator.LAUNCH_MODE_ID_PREF_KEY, modes.iterator().next());
 			}
 		}
 		else {
-			node.remove(Activator.PREFKEY_AUTORUN_CONFIG_ID);
+			node.remove(Activator.LAUNCH_CONFIG_ID_PREF_KEY);
 		}
-		try {
-			node.flush();
-		}
-		catch (final BackingStoreException e) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, 
-					"An error occured when saving the autorun launch configuration.", e));
+		
+		if (flush) {
+			try {
+				node.flush();
+			}
+			catch (final BackingStoreException e) {
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, 
+						"An error occured when saving the autorun launch configuration.", e));
+			}
 		}
 	}
 	
 	
 	@Override
 	protected void performDefaults() {
-		fEnableButton.setSelection(false);
-		fEntryCombo.setSelection(new StructuredSelection());
+		this.enableButton.setSelection(true);
+		this.entryViewer.setSelection(new StructuredSelection());
+	}
+	
+	@Override
+	protected void performApply() {
+		savePrefs(true);
 	}
 	
 	@Override
 	public boolean performOk() {
-		saveConfig();
+		savePrefs(false);
 		return true;
 	}
 	

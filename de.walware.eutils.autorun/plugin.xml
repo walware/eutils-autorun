@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <!--
  #=============================================================================#
- # Copyright (c) 2007-2014 WalWare/Stephan Wahlbrink (www.walware.de).
+ # Copyright (c) 2007-2014 Stephan Wahlbrink (WalWare.de) and others.
  # All rights reserved. This program and the accompanying materials
  # are made available under the terms of the Eclipse Public License v1.0
  # which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
             class="de.walware.eutils.autorun.internal.nostart.AutoRunStartup">
       </startup>
    </extension>
+   
    <extension
          point="org.eclipse.ui.keywords">
       <keyword
@@ -31,10 +32,10 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            id="de.walware.eutils.autorun.preferencePages.Config"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="de.walware.eutils.autorun.internal.AutoRunPreferencePage"
-            id="de.walware.eutils.autorun.preferencePages.Config"
-            name="Auto-Run">
+            name="Auto Run">
          <keywordReference
                id="de.walware.eutils.autorun.keywords.startup">
          </keywordReference>

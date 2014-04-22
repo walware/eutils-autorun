@@ -1,5 +1,5 @@
 /*=============================================================================#
- # Copyright (c) 2007-2014 WalWare.de/Stephan Wahlbrink (http://www.walware.de).
+ # Copyright (c) 2007-2014 Stephan Wahlbrink (WalWare.de) and others.
  # All rights reserved. This program and the accompanying materials
  # are made available under the terms of the Eclipse Public License v1.0
  # which accompanies this distribution, and is available at
@@ -20,11 +20,11 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 	
-	public static final String PLUGIN_ID = "de.walware.eutils.autorun"; //$NON-NLS-1$
+	public static final String PLUGIN_ID= "de.walware.eutils.autorun"; //$NON-NLS-1$
 	
-	public static final String PREFKEY_AUTORUN_ENABLED = "enabled"; //$NON-NLS-1$
-	public static final String PREFKEY_AUTORUN_CONFIG_ID = "config.id"; //$NON-NLS-1$
-	public static final String PREFKEY_AUTORUN_MODE_ID = "mode.id"; //$NON-NLS-1$
+	public static final String ENABLED_PREF_KEY= "enabled"; //$NON-NLS-1$
+	public static final String LAUNCH_CONFIG_ID_PREF_KEY= "config.id"; //$NON-NLS-1$
+	public static final String LAUNCH_MODE_ID_PREF_KEY= "mode.id"; //$NON-NLS-1$
 	
 	
 	private static Activator gPlugin;
@@ -46,12 +46,12 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
-		gPlugin = this;
+		gPlugin= this;
 	}
 	
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		gPlugin = null;
+		gPlugin= null;
 		super.stop(context);
 	}
 	
