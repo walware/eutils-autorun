@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<category-def name="de.walware.libraries" label="WalWare - Libraries"/>
+	
+	<feature url="features/de.walware.eutils.autorun_0.0.0.qualifier.jar" id="de.walware.eutils.autorun" version="0.0.0">
+		<category name="de.walware.libraries"/>
+	</feature>
+	
+</site>

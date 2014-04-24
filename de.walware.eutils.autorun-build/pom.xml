@@ -8,7 +8,7 @@
 	<artifactId>eutils-autorun</artifactId>
 	<version>0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>EUtils AutoRun</name>
+	<name>EclipseUtils AutoRun</name>
 	
 	<modules>
 		<module>targetplatform</module>
@@ -73,6 +73,8 @@
 			<id>walware-releng</id>
 			<modules>
 				<module>de.walware.eutils.autorun-feature</module>
+				
+				<module>repo</module>
 			</modules>
 			
 			<build>
