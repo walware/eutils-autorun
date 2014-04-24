@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>de.walware.eutils</groupId>
@@ -22,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<tycho.version>0.19.0</tycho.version>
-		<tycho.scmUrl>scm:git:git://github.com/walware/eutils-autorun.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://github.com/walware/eutils-autorun.git</tycho.scmUrl>
 	</properties>
 	
 	<build>
@@ -76,31 +77,23 @@
 			
 			<build>
 				<plugins>
+					<!-- enable source reference generation -->
 					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.4</version>
-						<inherited>false</inherited>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-packaging-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<sourceReferences>
+								<generate>true</generate>
+							</sourceReferences>
+						</configuration>
 						<dependencies>
 							<dependency>
-								<groupId>de.walware.releng</groupId>
-								<artifactId>de.walware.releng.assemblies</artifactId>
-								<version>1.0.0</version>
+								<groupId>org.eclipse.tycho.extras</groupId>
+								<artifactId>tycho-sourceref-jgit</artifactId>
+								<version>${tycho.version}</version>
 							</dependency>
 						</dependencies>
-						<executions>
-							<execution>
-								<id>make-snapshot</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptorRefs>
-										<descriptorRef>module-snapshot</descriptorRef>
-									</descriptorRefs>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
