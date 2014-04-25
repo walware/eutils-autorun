@@ -2,7 +2,7 @@
 <feature
       id="de.walware.eutils.autorun"
       label="Auto Run"
-      version="0.5.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="WalWare.de"
       license-feature="de.walware.opensource.license"
       license-feature-version="1.0.0">

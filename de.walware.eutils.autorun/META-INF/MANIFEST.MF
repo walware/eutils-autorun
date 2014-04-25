@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Vendor: WalWare.de
 Bundle-Name: Auto Run
 Bundle-SymbolicName: de.walware.eutils.autorun;singleton:=true
-Bundle-Version: 0.5.1.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.walware.eutils.autorun.internal.Activator
 Bundle-ActivationPolicy: lazy;exclude:="de.walware.eutils.autorun.internal.nostart"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
